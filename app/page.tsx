@@ -2,13 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import { Member } from "@/types/member";
-import { User, Activity, AlertCircle } from "lucide-react";
+import { User, Activity, AlertCircle, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function PilatesDashboard() {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
+  };
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -32,11 +40,22 @@ export default function PilatesDashboard() {
     <div className="max-w-md mx-auto w-full h-screen bg-white shadow-xl overflow-hidden flex flex-col relative">
       {/* Header */}
       <header className="px-6 py-5 border-b border-gray-100 bg-white sticky top-0 z-10">
-        <h1 className="text-xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-indigo-600" />
-          필라테스 회원 관리
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">오늘의 예약 및 회원 현황을 확인하세요.</p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-gray-900 flex items-center gap-2">
+              <Activity className="w-6 h-6 text-indigo-600" />
+              필라테스 회원 관리
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">오늘의 예약 및 회원 현황을 확인하세요.</p>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+            title="로그아웃"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
+        </div>
       </header>
 
       {/* Member List */}
